@@ -1,0 +1,59 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+@import './theme.css';
+
+@plugin 'tailwindcss-react-aria-components';
+
+/* UntitledUI's dark tokens switch on a `.dark-mode` class. Without this, `dark:`
+   would follow the OS setting and half-apply dark styles. */
+@custom-variant dark (&:where(.dark-mode, .dark-mode *));
+@custom-variant label (& [data-label]);
+@custom-variant focus-input-within (&:has(input:focus));
+
+@utility scrollbar-hide {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  scrollbar-width: none;
+}
+
+@utility transition-inherit-all {
+  transition-property: inherit;
+  transition-duration: inherit;
+  transition-timing-function: inherit;
+}
+
+@layer base {
+  :root {
+    /* theme.css reads the font from this variable. */
+    --font-inter: 'Inter Variable';
+  }
+
+  html,
+  body {
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-variant-ligatures: contextual;
+    font-kerning: normal;
+  }
+
+  /* Hide browser-native controls that UntitledUI components replace. */
+  details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+
+  input[type='number'] {
+    appearance: textfield;
+  }
+
+  input[type='search']::-webkit-search-cancel-button {
+    appearance: none;
+  }
+}

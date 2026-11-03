@@ -1,1 +1,11 @@
 dist
+
+# UntitledUI vendor code, kept as its CLI writes it. See docs/CONVENTIONS.md.
+src/components/base
+src/components/application
+src/components/foundations
+src/components/marketing
+src/components/shared-assets
+src/utils/cx.ts
+src/utils/is-react-component.ts
+src/styles/theme.css

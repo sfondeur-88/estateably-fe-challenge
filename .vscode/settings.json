@@ -1,13 +1,16 @@
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "[javascript][typescript][typescriptreact][json][jsonc][css]": {
+  "[javascript][typescript][typescriptreact][json][jsonc][tailwindcss]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "editor.formatOnSave": true,
   "prettier.requireConfig": true,
+  "prettier.documentSelectors": ["**/*.css"],
   "editor.codeActionsOnSave": {
     "source.organizeImports": "never",
     "source.fixAll.eslint": "explicit"
   },
-  "eslint.workingDirectories": ["./client"]
+  "eslint.workingDirectories": ["./client"],
+  "files.associations": { "*.css": "tailwindcss" },
+  "tailwindCSS.classFunctions": ["cx", "sortCx"]
 }

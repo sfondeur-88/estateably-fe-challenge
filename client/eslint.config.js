@@ -9,7 +9,13 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores([
+    'dist',
+    // UntitledUI vendor code, kept as its CLI writes it. See docs/CONVENTIONS.md.
+    'src/components/{base,application,foundations,marketing,shared-assets}/**',
+    'src/utils/cx.ts',
+    'src/utils/is-react-component.ts',
+  ]),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [

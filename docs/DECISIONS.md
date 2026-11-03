@@ -16,3 +16,12 @@ Key decisions and the trade-offs made for the purpose of the take-home project.
 - **Why:** Easy set-up, and more support than oxlint & biome. The plugins: jsx-a11y flags accessibility issues, and typescript-eslint adds type-aware rules for development.
 - **Trade-off:** oxlint, the current Vite default, is much faster, but speed doesn't matter at this size. Plugin support: ESLint 9 for jsx-a11y, and TypeScript 6.0 for typescript-eslint.
 
+## Design System
+
+### UntitledUI + Tailwind v4
+- **Decision:** UntitledUI React (v8) on Tailwind v4, built on React Aria. Its CLI copies component source into the repo.
+- **Why:** I wanted to align with Estateably's design system, so the patterns are recognizable when presenting. Tailwind v4 would've been my choice regardless if I adopted a framework vs a custom one. I really like the version 4 CSS approach they've taken, and the performance is top-notch. React Aria is adopted due to being the headless primitive that Untitled UI uses, and the baked in accessibility is important to build on top of from the start versus later on.
+- **Trade-off:** It requires React 19. Editing copied components makes upstream updates harder, so `theme.css` stays identical to upstream.
+- **Friction:**
+  - The CLI ignored project formatting and lint config, and rewrites shared files on every `add`. I resolved it by excluding it from ESLint and Prettier as it's generated 'vendor code', but still kept type-checking.
+  - `dark:` follows the OS setting unless remapped to UntitledUI's `.dark-mode` class, even with dark mode unused.

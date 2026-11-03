@@ -10,6 +10,8 @@ Run from `client/`:
 |---|---|
 | `npm run dev` | Vite dev server, proxies `/api` to the backend |
 | `npm run build` | Type-checks, then builds |
+| `npm test` | Vitest, single run |
+| `npm run test:watch` | Vitest, watch mode |
 | `npm run lint` | ESLint |
 | `npm run format` | Prettier, writes changes |
 | `npm run format:check` | Prettier, reports only |
@@ -23,6 +25,20 @@ Run from `client/`:
 ## Code style
 
 - **Prettier owns formatting.** ESLint covers correctness only.
+- **Imports:** `@/` for anything outside the current folder, `./` for siblings. Order is enforced by ESLint.
+
+## Styling
+
+- **Tailwind v4, CSS-first.** Theme and plugins live in CSS; there is no `tailwind.config.js`.
+- **Utility classes in JSX.** Reuse comes from components, not custom CSS classes or `@apply`.
+- **Design tokens come from UntitledUI's `theme.css`.** No arbitrary values (`text-[13px]`) when a token exists.
+
+## UntitledUI components
+
+- **Vendor code stays as the CLI writes it.** That covers `src/components/{base,application,foundations,marketing,shared-assets}/`, `src/utils/cx.ts`, `src/utils/is-react-component.ts` and `src/styles/theme.css`. Excluded from ESLint and Prettier; still type-checked.
+- **Wrap, don't edit.** Customise by composing vendor components inside our own, outside the vendor folders.
+- **Patch only for bugs or type errors**, and record why in [DECISIONS.md](./DECISIONS.md).
+- **Adding one**, from `client/`: `npx untitledui@0.1.69 add <name> --lib-version 8 -y`, then `npm run format`. The CLI re-saves `tsconfig.json` in its own style.
 
 ## Project structure
 
