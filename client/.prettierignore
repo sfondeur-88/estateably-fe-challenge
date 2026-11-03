@@ -6,6 +6,7 @@ src/components/application
 src/components/foundations
 src/components/marketing
 src/components/shared-assets
+src/hooks/use-breakpoint.ts
 src/utils/cx.ts
 src/utils/is-react-component.ts
 src/styles/theme.css

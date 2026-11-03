@@ -10,6 +10,43 @@
 @custom-variant label (& [data-label]);
 @custom-variant focus-input-within (&:has(input:focus));
 
+/* Brand palette, inspired by Estateably: sand (neutral-100) to dark green (neutral-900).
+   UntitledUI's semantic tokens read these scales, so overriding them here re-themes every
+   component without touching theme.css. Text pairings are checked against WCAG AA. */
+@theme {
+  --color-neutral-25: #fdfaf6;
+  --color-neutral-50: #f7f3ed;
+  --color-neutral-100: #ede6dd;
+  --color-neutral-200: #d9d6cd;
+  --color-neutral-300: #bcbbb2;
+  --color-neutral-400: #959789;
+  --color-neutral-500: #707569;
+  --color-neutral-600: #525b50;
+  --color-neutral-700: #3d4840;
+  --color-neutral-800: #2c3933;
+  --color-neutral-900: #23352f;
+  --color-neutral-950: #0d1f17;
+
+  --color-brand-50: #e7f6ee;
+  --color-brand-100: #d1ecde;
+  --color-brand-200: #b1ddc7;
+  --color-brand-300: #88c4a7;
+  --color-brand-400: #5ea383;
+  --color-brand-500: #3c8163;
+  --color-brand-600: #276249;
+  --color-brand-700: #1e503b;
+  --color-brand-800: #194130;
+  --color-brand-900: #193428;
+  --color-brand-950: #0c1f17;
+
+  /* Surfaces (cards, inputs, menus) are a warm off-white instead of pure white. */
+  --color-bg-primary: var(--color-neutral-25);
+
+  /* UntitledUI's shadows cast downward. The sidebar casts right, tinted dark green rather than black. */
+  --shadow-sidebar:
+    1px 0 2px rgb(13 31 23 / 0.2), 6px 0 24px -4px rgb(13 31 23 / 0.3);
+}
+
 @utility scrollbar-hide {
   &::-webkit-scrollbar {
     display: none;

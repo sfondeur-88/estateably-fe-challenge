@@ -25,3 +25,17 @@ Key decisions and the trade-offs made for the purpose of the take-home project.
 - **Friction:**
   - The CLI ignored project formatting and lint config, and rewrites shared files on every `add`. I resolved it by excluding it from ESLint and Prettier as it's generated 'vendor code', but still kept type-checking.
   - `dark:` follows the OS setting unless remapped to UntitledUI's `.dark-mode` class, even with dark mode unused.
+  - The smallest nav unit the CLI offers (`sidebar-navigation-base`) brought 23 files, of which only `NavItemBase` is used. Unused files never reach the bundle, and pruning them would be undone by the next `add`.
+  - The sidebar templates hardcode the Untitled logo, search and account card, so the sidebar is composed from `NavItemBase` instead.
+
+### Estateably-inspired palette
+- **Decision:** A sand to dark-green neutral scale and green branding, set as token overrides in `globals.css`. Dark-green sidebar, sand page, off-white surfaces.
+- **Why:** Anchored on Estateably's dark green (`#23352f`) and sand (`#ede6dd`). UntitledUI's semantic tokens read these, so every component re-themes with the base `theme.css` untouched. Sand/Beige colours are also calming & easy on the eyes.
+- **Trade-off:** Every text pairing is checked against WCAG AA. The selected nav item's background barely differs from UntitledUI's default, so its icon turns light-green.
+
+## Routing
+
+### React Router v8, data mode
+- **Decision:** React Router v8 with `createBrowserRouter`. No loaders: TanStack Query handles the fetching.
+- **Why:** React router is widely used, and v8 has been stable since June 2026. UntitledUI's starter kit uses RR as well. Data mode adds route error boundaries.
+- **Trade-off:** Search params are untyped strings, so URL state (`asOf`, filters, paging) needs a small helper. TanStack Router types them, at the cost of more setup and less familiarity.

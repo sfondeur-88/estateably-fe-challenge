@@ -13,6 +13,7 @@ export default defineConfig([
     'dist',
     // UntitledUI vendor code, kept as its CLI writes it. See docs/CONVENTIONS.md.
     'src/components/{base,application,foundations,marketing,shared-assets}/**',
+    'src/hooks/use-breakpoint.ts',
     'src/utils/cx.ts',
     'src/utils/is-react-component.ts',
   ]),
