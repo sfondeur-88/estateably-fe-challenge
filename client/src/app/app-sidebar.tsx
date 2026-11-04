@@ -24,7 +24,7 @@ const NAV_ITEMS: NavItem[] = [
  */
 export function AppSidebar() {
   return (
-    <aside className="dark-mode flex items-center gap-6 bg-primary px-4 py-3 [--color-fg-quaternary_hover:var(--color-brand-300)] md:sticky md:top-0 md:h-dvh md:w-64 md:shrink-0 md:flex-col md:items-stretch md:px-4 md:py-6 md:shadow-sidebar">
+    <aside className="dark-mode flex items-center gap-6 bg-primary px-4 py-3 shadow-topbar [--color-fg-quaternary_hover:var(--color-brand-300)] md:sticky md:top-0 md:h-dvh md:w-64 md:shrink-0 md:flex-col md:items-stretch md:px-4 md:py-6 md:shadow-sidebar">
       <BrandLink />
       <nav aria-label="Main">
         <ul className="flex gap-1 md:flex-col">

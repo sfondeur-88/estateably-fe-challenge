@@ -157,6 +157,13 @@ export interface BalanceSnapshot {
   totalsByCurrency: Partial<Record<CurrencyCode, CurrencyTotal>>;
 }
 
+/** Not in the contract: `GET /accounts` returns this instead of `ListMeta`. `null` totals with `includeBalances=false`. */
+export interface AccountListMeta {
+  total: number;
+  asOf: IsoDate;
+  totalsByCurrency: BalanceSnapshot['totalsByCurrency'] | null;
+}
+
 export interface BalanceHistory {
   accountId: string;
   currency: CurrencyCode;

@@ -1,9 +1,12 @@
+import { DocumentTitle } from '@/components/common/document-title.tsx';
+import { PageHeader } from '@/components/common/page-header.tsx';
+
 // TODO:Shane - Placeholder until the account transactions view (stories 1 and 2) is built.
 export function AccountPage() {
   return (
     <>
-      <title>Account · Simplewealth</title>
-      <h1 className="text-display-xs font-semibold text-primary">Account</h1>
+      <DocumentTitle title="Account" />
+      <PageHeader title="Account" />
     </>
   );
 }

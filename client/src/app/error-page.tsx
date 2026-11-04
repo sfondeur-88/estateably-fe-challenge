@@ -1,6 +1,7 @@
 import { isRouteErrorResponse, useRouteError } from 'react-router';
 
 import { Button } from '@/components/base/buttons/button';
+import { DocumentTitle } from '@/components/common/document-title.tsx';
 
 import { paths } from './paths.ts';
 
@@ -13,7 +14,7 @@ export function ErrorPage() {
 
   return (
     <section className="mx-auto max-w-xl px-4 py-12 text-center">
-      <title>Something went wrong · Simplewealth</title>
+      <DocumentTitle title="Something went wrong" />
       <h1 className="text-display-xs font-semibold text-primary">
         Something went wrong
       </h1>

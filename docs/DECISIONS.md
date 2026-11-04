@@ -39,3 +39,10 @@ Key decisions and the trade-offs made for the purpose of the take-home project.
 - **Decision:** React Router v8 with `createBrowserRouter`. No loaders: TanStack Query handles the fetching.
 - **Why:** React router is widely used, and v8 has been stable since June 2026. UntitledUI's starter kit uses RR as well. Data mode adds route error boundaries.
 - **Trade-off:** Search params are untyped strings, so URL state (`asOf`, filters, paging) needs a small helper. TanStack Router types them, at the cost of more setup and less familiarity.
+
+## Data
+
+### TypeScript types for API responses, zod for user input
+- **Decision:** API responses are typed from the provided server types and asserted once in `apiFetch()`. Zod is reserved for form input and URL search params (essentially user input).
+- **Why:** The API shapes provided are trusted. Forms and URLs are where potential typing/validation issues could show up. Parsing every response would duplicate `types.ts` as schemas and could cost time on larger transaction lists.
+- **Trade-off:** A server change that breaks the contract surfaces as a render bug instead of a query error.

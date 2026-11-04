@@ -46,12 +46,14 @@ Run from `client/`:
 - **`src/features/<area>/`**: a feature's pages, components and queries. Features don't import from each other; shared code moves out.
 - **`src/api/`**: fetch client and query setup.
 - **`src/lib/`**: our pure helpers (money, dates). **`src/utils/`** is UntitledUI's (vendor).
-- **`src/components/`**: UntitledUI vendor folders, plus our cross-feature components in their own folder.
+- **`src/components/`**: UntitledUI vendor folders. Our cross-feature components live in `src/components/common/`.
 
 ## State
 
 - **Server state:** TanStack Query.
-- **Client state:** <!-- -->
+- **Queries live in `features/<area>/queries.ts`:** fetch functions, query keys and `queryOptions` factories. Components spread the options and add their own (`select`, `enabled`). Consider creating sub-directories if queries.ts grows.
+- **Types are inferred from the `queryFn`.** No generics on `useQuery`.
+- **Client state:** <!-- TODO:Shane -->
 
 ## Money
 

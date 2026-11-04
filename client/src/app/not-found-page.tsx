@@ -1,11 +1,12 @@
 import { Button } from '@/components/base/buttons/button';
+import { DocumentTitle } from '@/components/common/document-title.tsx';
 
 import { paths } from './paths.ts';
 
 export function NotFoundPage() {
   return (
     <section className="mx-auto max-w-xl py-12 text-center">
-      <title>Page not found · Simplewealth</title>
+      <DocumentTitle title="Page not found" />
       <h1 className="text-display-xs font-semibold text-primary">
         Page not found
       </h1>
