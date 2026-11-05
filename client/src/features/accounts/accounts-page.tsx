@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 
 import { Button } from '@/components/base/buttons/button';
@@ -8,26 +8,31 @@ import { PageHeader } from '@/components/common/page-header.tsx';
 
 import { AccountGroupCard } from './account-group-card.tsx';
 import { groupAccounts } from './account-types.ts';
+import { AsOfPicker } from './as-of-picker.tsx';
 import { accountsQueryOptions } from './queries.ts';
+import { useAsOf } from './use-as-of.ts';
 
 export function AccountsPage() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-8">
       <DocumentTitle title="Accounts" />
-      <PageHeader title="Accounts" />
+      <PageHeader title="Accounts" actions={<AsOfPicker />} />
       <AccountGroups />
     </div>
   );
 }
 
 function AccountGroups() {
+  const [asOf] = useAsOf();
   const {
     data: groups,
     error,
     isFetching,
+    isPlaceholderData,
     refetch,
   } = useQuery({
-    ...accountsQueryOptions(),
+    ...accountsQueryOptions(asOf),
+    placeholderData: keepPreviousData,
     select: (response) => groupAccounts(response.data),
   });
 
@@ -58,9 +63,13 @@ function AccountGroups() {
     return <StatusCard message="You don't have any accounts yet." />;
   }
 
-  return groups.map((group) => (
-    <AccountGroupCard key={group.id} group={group} />
-  ));
+  return (
+    <div aria-busy={isPlaceholderData} className="flex flex-col gap-8">
+      {groups.map((group) => (
+        <AccountGroupCard key={group.id} group={group} />
+      ))}
+    </div>
+  );
 }
 
 type StatusCardProps = {

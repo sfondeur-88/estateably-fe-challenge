@@ -42,6 +42,9 @@
   /* Surfaces (cards, inputs, menus) are a warm off-white instead of pure white. */
   --color-bg-primary: var(--color-neutral-25);
 
+  /* Control borders (inputs, radios, secondary buttons) at 3:1 against surfaces and the page, for WCAG 1.4.11. */
+  --color-border-primary: var(--color-neutral-500);
+
   /* Nav shadows tinted dark green rather than UntitledUI's black. The sidebar casts right, the mobile top bar down. */
   --shadow-sidebar:
     1px 0 2px rgb(13 31 23 / 0.2), 6px 0 24px -4px rgb(13 31 23 / 0.3);

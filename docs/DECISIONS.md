@@ -27,6 +27,7 @@ Key decisions and the trade-offs made for the purpose of the take-home project.
   - `dark:` follows the OS setting unless remapped to UntitledUI's `.dark-mode` class, even with dark mode unused.
   - The smallest nav unit the CLI offers (`sidebar-navigation-base`) brought 23 files, of which only `NavItemBase` is used. Unused files never reach the bundle, and pruning them would be undone by the next `add`.
   - The sidebar templates hardcode the Untitled logo, search and account card, so the sidebar is composed from `NavItemBase` instead.
+  - `DatePicker` commits every calendar click immediately, so its Cancel button only closes the popover and doesn't truly Cancel the filter by default. Its trigger button only exposes `size`, so `AsOfPicker` wraps React Aria's `DatePicker` with the vendor `Calendar` and `Button`, joined to a Today button. Selecting a date commits and closes, React Aria's default.
 
 ### Estateably-inspired palette
 - **Decision:** A sand to dark-green neutral scale and green branding, set as token overrides in `globals.css`. Dark-green sidebar, sand page, off-white surfaces.
@@ -46,3 +47,8 @@ Key decisions and the trade-offs made for the purpose of the take-home project.
 - **Decision:** API responses are typed from the provided server types and asserted once in `apiFetch()`. Zod is reserved for form input and URL search params (essentially user input).
 - **Why:** The API shapes provided are trusted. Forms and URLs are where potential typing/validation issues could show up. Parsing every response would duplicate `types.ts` as schemas and could cost time on larger transaction lists.
 - **Trade-off:** A server change that breaks the contract surfaces as a render bug instead of a query error.
+
+### `@internationalized/date` for calendar dates
+- **Decision:** Calendar dates stay `YYYY-MM-DD` strings. `@internationalized/date` handles local "today" and parsing, and the client always sends its own today as `asOf`.
+- **Why:** Its `CalendarDate` is a date with no time or zone, matching the API's model, and it's the value type React Aria's `DatePicker` uses. It was already installed through React Aria. The server's default "today" uses the server's clock, which can be a different day from the user's.
+- **Trade-off:** Luxon and date-fns are more familiar, but they're built around instants, so the picker would still need a conversion. Tests run in `America/Vancouver` so day-shift bugs fail locally, not only in a user's evening.

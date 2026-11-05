@@ -18,6 +18,8 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
+    // West of UTC, so date bugs that hide in a UTC environment (CI) fail locally too.
+    env: { TZ: 'America/Vancouver' },
     setupFiles: ['./src/test/setup.ts'],
   },
 });
