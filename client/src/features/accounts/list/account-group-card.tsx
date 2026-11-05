@@ -3,9 +3,12 @@ import { Link } from 'react-router';
 import type { Account } from '@/api/types.ts';
 import { paths } from '@/app/paths.ts';
 import { Card } from '@/components/common/card.tsx';
+import {
+  type AccountGroup,
+  accountTypeLabels,
+} from '@/features/accounts/account-types.ts';
+import { asOfSearch, useAsOf } from '@/features/accounts/as-of/use-as-of.ts';
 import { formatMoney } from '@/lib/money.ts';
-
-import { type AccountGroup, accountTypeLabels } from './account-types.ts';
 
 export function AccountGroupCard({ group }: { group: AccountGroup }) {
   const headingId = `account-group-${group.id}`;
@@ -29,13 +32,14 @@ export function AccountGroupCard({ group }: { group: AccountGroup }) {
 }
 
 function AccountRow({ account }: { account: Account }) {
+  const [asOf] = useAsOf();
   const details = [account.institution, accountTypeLabels[account.type]]
     .filter(Boolean)
     .join(' · ');
 
   return (
     <Link
-      to={paths.account(account.id)}
+      to={{ pathname: paths.account(account.id), search: asOfSearch(asOf) }}
       className="flex items-center justify-between gap-4 px-4 py-3 outline-focus-ring transition duration-100 ease-linear group-first:rounded-t-xl group-last:rounded-b-xl hover:bg-primary_hover focus-visible:outline-2 focus-visible:-outline-offset-2 md:px-6 md:py-4"
     >
       <div className="min-w-0">

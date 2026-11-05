@@ -1,7 +1,7 @@
 import { createBrowserRouter, redirect, type RouteObject } from 'react-router';
 
-import { AccountPage } from '@/features/accounts/account-page.tsx';
-import { AccountsPage } from '@/features/accounts/accounts-page.tsx';
+import { AccountPage } from '@/features/accounts/detail/account-page.tsx';
+import { AccountsPage } from '@/features/accounts/list/accounts-page.tsx';
 
 import { AppLayout } from './app-layout.tsx';
 import { ErrorPage } from './error-page.tsx';

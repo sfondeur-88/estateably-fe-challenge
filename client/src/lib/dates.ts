@@ -2,16 +2,25 @@ import { getLocalTimeZone, parseDate, today } from '@internationalized/date';
 
 import type { IsoDate } from '@/api/types.ts';
 
-const mediumDateFormatter = new Intl.DateTimeFormat('en-CA', {
-  dateStyle: 'medium',
-  timeZone: 'UTC',
-});
+const dateFormatters = {
+  medium: new Intl.DateTimeFormat('en-CA', {
+    dateStyle: 'medium',
+    timeZone: 'UTC',
+  }),
+  long: new Intl.DateTimeFormat('en-CA', {
+    dateStyle: 'long',
+    timeZone: 'UTC',
+  }),
+};
 
 export function todayIso(): IsoDate {
   return today(getLocalTimeZone()).toString();
 }
 
-/** `'2026-11-04'` → `'Nov 4, 2026'` */
-export function formatDate(date: IsoDate): string {
-  return mediumDateFormatter.format(parseDate(date).toDate('UTC'));
+/** `'2026-11-04'` → `'Nov 4, 2026'`, or `'November 4, 2026'` with `'long'` */
+export function formatDate(
+  date: IsoDate,
+  style: keyof typeof dateFormatters = 'medium',
+): string {
+  return dateFormatters[style].format(parseDate(date).toDate('UTC'));
 }

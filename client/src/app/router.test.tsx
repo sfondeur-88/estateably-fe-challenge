@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { createMemoryRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 import { expect, test } from 'vitest';
@@ -32,7 +32,8 @@ test('marks Accounts as the current page on an account detail route', async () =
   renderAt('/accounts/42');
 
   await screen.findByRole('heading', { name: 'Account' });
-  expect(screen.getByRole('link', { name: 'Accounts' })).toHaveAttribute(
+  const nav = screen.getByRole('navigation', { name: 'Main' });
+  expect(within(nav).getByRole('link', { name: 'Accounts' })).toHaveAttribute(
     'aria-current',
     'page',
   );

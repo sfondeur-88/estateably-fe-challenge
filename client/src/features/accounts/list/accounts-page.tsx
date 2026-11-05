@@ -1,16 +1,15 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import type { ReactNode } from 'react';
 
 import { Button } from '@/components/base/buttons/button';
-import { Card } from '@/components/common/card.tsx';
 import { DocumentTitle } from '@/components/common/document-title.tsx';
 import { PageHeader } from '@/components/common/page-header.tsx';
+import { StatusCard } from '@/components/common/status-card.tsx';
+import { groupAccounts } from '@/features/accounts/account-types.ts';
+import { AsOfPicker } from '@/features/accounts/as-of/as-of-picker.tsx';
+import { useAsOf } from '@/features/accounts/as-of/use-as-of.ts';
+import { accountsQueryOptions } from '@/features/accounts/queries.ts';
 
 import { AccountGroupCard } from './account-group-card.tsx';
-import { groupAccounts } from './account-types.ts';
-import { AsOfPicker } from './as-of-picker.tsx';
-import { accountsQueryOptions } from './queries.ts';
-import { useAsOf } from './use-as-of.ts';
 
 export function AccountsPage() {
   return (
@@ -69,22 +68,5 @@ function AccountGroups() {
         <AccountGroupCard key={group.id} group={group} />
       ))}
     </div>
-  );
-}
-
-type StatusCardProps = {
-  message: string;
-  role?: 'status' | 'alert';
-  action?: ReactNode;
-};
-
-function StatusCard({ message, role, action }: StatusCardProps) {
-  return (
-    <Card className="flex flex-col items-start gap-4 px-4 py-6 md:px-6">
-      <p role={role} className="text-md text-tertiary">
-        {message}
-      </p>
-      {action}
-    </Card>
   );
 }

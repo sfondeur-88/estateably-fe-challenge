@@ -34,3 +34,8 @@ export function useAsOf() {
 
   return [asOf, setAsOf] as const;
 }
+
+/** The search string that carries `asOf` onto a link, empty for today. */
+export function asOfSearch(asOf: IsoDate): string {
+  return asOf === todayIso() ? '' : `?${new URLSearchParams({ asOf })}`;
+}
