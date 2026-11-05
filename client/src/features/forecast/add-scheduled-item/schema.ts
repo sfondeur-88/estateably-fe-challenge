@@ -35,7 +35,7 @@ export const scheduledItemFormSchema = z
     frequency: z.enum(FREQUENCIES, { error: 'Choose how often it repeats.' }),
     startDate: z.iso
       .date({ error: 'Enter the next due date.' })
-      .refine((date) => date >= todayIso(), 'Choose today or a later date.'),
+      .refine((date) => date > todayIso(), 'Choose a date after today.'),
     accountId: z.string().min(1, 'Choose an account.'),
   })
   .transform(({ amount, ...values }) => ({

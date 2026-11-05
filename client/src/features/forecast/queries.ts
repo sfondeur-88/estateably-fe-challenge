@@ -1,3 +1,4 @@
+import { parseDate } from '@internationalized/date';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 
 import { apiFetch } from '@/api/client.ts';
@@ -15,8 +16,10 @@ export type NewScheduledItem = Pick<
   'kind' | 'name' | 'amount' | 'frequency' | 'startDate' | 'accountId'
 >;
 
-function fetchProjection(from: IsoDate, currency: CurrencyCode) {
-  const params = new URLSearchParams({ from, asOf: from, currency });
+function fetchProjection(asOf: IsoDate, currency: CurrencyCode) {
+  // Starting tomorrow makes startingBalance today's closing balance, so no month mixes actuals and forecast.
+  const from = parseDate(asOf).add({ days: 1 }).toString();
+  const params = new URLSearchParams({ from, asOf, currency });
   return apiFetch<BudgetProjection>(`/projections/budget?${params}`);
 }
 
@@ -35,16 +38,16 @@ function createScheduledItem(item: NewScheduledItem) {
 
 export const forecastKeys = {
   all: ['forecast'] as const,
-  projection: (from: IsoDate, currency: CurrencyCode) =>
-    [...forecastKeys.all, 'projection', { from, currency }] as const,
+  projection: (asOf: IsoDate, currency: CurrencyCode) =>
+    [...forecastKeys.all, 'projection', { asOf, currency }] as const,
   occurrences: (from: IsoDate) =>
     [...forecastKeys.all, 'occurrences', { from }] as const,
 };
 
-export function projectionQueryOptions(from: IsoDate, currency: CurrencyCode) {
+export function projectionQueryOptions(asOf: IsoDate, currency: CurrencyCode) {
   return queryOptions({
-    queryKey: forecastKeys.projection(from, currency),
-    queryFn: () => fetchProjection(from, currency),
+    queryKey: forecastKeys.projection(asOf, currency),
+    queryFn: () => fetchProjection(asOf, currency),
   });
 }
 

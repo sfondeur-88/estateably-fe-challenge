@@ -62,8 +62,15 @@ Key decisions and the trade-offs made for the purpose of the take-home project.
 
 ### `@internationalized/date` for calendar dates
 - **Decision:** Calendar dates stay `YYYY-MM-DD` strings. `@internationalized/date` handles local "today" and parsing, and the client always sends its own today as `asOf`.
-- **Why:** Its `CalendarDate` is a date with no time or zone, matching the API's model, and it's the value type React Aria's `DatePicker` uses. It was already installed through React Aria. The server's default "today" uses the server's clock, which can be a different day from the user's.
+- **Why:** Its `CalendarDate` is a date with no time or zone, matching the API's model, and it's the value type React Aria's `DatePicker` uses. It was already installed through React Aria. The server's default "today" uses the server's clock, which can be a different day from the user's. Lightweight for the use-case compared to Luxon as well.
 - **Trade-off:** Luxon and date-fns are more familiar, but they're built around instants, so the picker would still need a conversion. Tests run in `America/Vancouver` so day-shift bugs fail locally, not only in a user's evening.
+
+## Accounts
+
+### Available balance as the headline
+- **Decision:** Account rows and the account page lead with `available` (posted plus pending). The account page lists posted and pending beneath it.
+- **Why:** It's what the user can actually spend, and a card hold has already reduced it. Showing posted alone would overstate the money on hand while a hold is in flight.
+- **Trade-off:** A hold that never posts (the seeded hotel hold) lowers the headline until it drops off.
 
 ## Transactions
 
@@ -83,18 +90,24 @@ Key decisions and the trade-offs made for the purpose of the take-home project.
 - **Stable `getItemKey`:** an inline function made the virtualizer remeasure every loaded row on each scroll commit. With `useCallback`, scroll commits take 4 to 7 ms.
 - **Module-level `select`:** grouping rows by date only re-runs when a page arrives, not on every scroll render.
 - **Stale data dims** (`aria-busy`, after 200 ms) while a new `asOf` loads, instead of flashing a spinner.
+- **Forecast route is lazy-loaded**, so Recharts only downloads when the forecast opens. Initial JS went from 1,342 kB to 808 kB (402 to 250 kB gzipped).
 
 ## Forecast
 
 ### Recharts for the projection chart
 - **Decision:** A Recharts line chart of month-end balances, with the lowest point ringed. The chart is `role="img"` with a text summary, and the Monthly breakdown table carries the same numbers.
 - **Why:** UntitledUI's chart examples are built on Recharts, so the styling matches. The table is the accessible version of the data.
-- **Trade-off:** Recharts is a large dependency for one chart.
+- **Trade-off:** Recharts is a large dependency for one chart, so the forecast route is lazy-loaded and the accounts pages never download it.
 
 ### Uncontrolled form, validated with zod on submit
 - **Decision:** React Aria's `Form` reads `FormData` on submit and parses it with a zod schema. Server `422` details map onto the same fields. Focus moves to the first invalid field.
 - **Why:** One schema handles parsing and messages, including `parseMoneyInput` turning `84.95` into `8495` with integer maths. Six fields don't need a form library.
 - **Trade-off:** UntitledUI fields show errors through `hint`, so the form keeps its own error state rather than using React Aria's built-in validation display.
+
+### The forecast starts tomorrow
+- **Decision:** The projection is requested with `asOf` today and `from` tomorrow. New bills and income must be due after today.
+- **Why:** The server uses actual transactions up to `asOf` and scheduled items after it. Starting tomorrow makes the starting balance today's closing balance, matching the Accounts page, and no month mixes actuals with forecast. An unpaid item due today is already overdue on the server and never projected.
+- **Trade-off:** Today's unpaid bills only appear in Upcoming, flagged overdue, not in the projected balance.
 
 ### One currency at a time
 - **Decision:** A CAD/USD toggle (`?currency=`) scopes the whole forecast page. It only appears when there are 2 or more currencies.

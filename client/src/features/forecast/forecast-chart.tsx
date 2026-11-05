@@ -31,11 +31,11 @@ type ForecastChartProps = {
 };
 
 export function ForecastChart({ projection }: ForecastChartProps) {
-  const { currency, range, startingBalance, endingBalance, lowestPoint } =
+  const { currency, range, asOf, startingBalance, endingBalance, lowestPoint } =
     projection;
 
   const points: ChartPoint[] = [
-    { date: range.from, balance: startingBalance },
+    { date: asOf, balance: startingBalance },
     ...projection.series.map((bucket) => ({
       date: bucket.end,
       balance: bucket.closingBalance,
@@ -71,7 +71,7 @@ export function ForecastChart({ projection }: ForecastChartProps) {
               padding={{ left: 12, right: 12 }}
               interval={0}
               tickFormatter={(date: IsoDate) =>
-                date === range.from ? 'Now' : formatDate(date, 'month')
+                date === asOf ? 'Now' : formatDate(date, 'month')
               }
               tick={{ fill: 'var(--color-text-tertiary)', fontSize: 12 }}
               tickLine={false}

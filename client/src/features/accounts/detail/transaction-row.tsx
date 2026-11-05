@@ -2,6 +2,7 @@ import {
   ArrowDownLeft,
   CreditCard02,
   Repeat04,
+  ReverseLeft,
   SwitchHorizontal01,
 } from '@untitledui/icons';
 import { type FC, memo } from 'react';
@@ -22,6 +23,9 @@ function transactionKind(transaction: Transaction): TransactionKind {
   }
   if (transaction.scheduledItemId) {
     return { label: 'Recurring', icon: Repeat04 };
+  }
+  if (transaction.amount === 0) {
+    return { label: 'Adjustment', icon: ReverseLeft };
   }
   if (transaction.amount > 0) {
     return { label: 'Deposit', icon: ArrowDownLeft };

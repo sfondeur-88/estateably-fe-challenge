@@ -1,5 +1,7 @@
 import { describe, expect, test } from 'vitest';
 
+import { todayIso } from '@/lib/dates.ts';
+
 import { scheduledItemFormSchema } from './schema.ts';
 
 const valid = {
@@ -19,10 +21,11 @@ describe('scheduledItemFormSchema', () => {
     ).toBe(6000);
   });
 
-  test('rejects a due date before today', () => {
+  // The server counts an unpaid date of today as overdue and projects only later dates.
+  test('rejects a due date of today', () => {
     const result = scheduledItemFormSchema.safeParse({
       ...valid,
-      startDate: '2020-01-01',
+      startDate: todayIso(),
     });
     expect(result.success).toBe(false);
   });

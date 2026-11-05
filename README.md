@@ -1,224 +1,93 @@
-# Personal Finance Manager — challenge starter
+# Simplewealth
 
-Starting point for the [Personal Finance Manager frontend challenge](docs/CHALLENGE.md):
-a complete backend, and an empty React app for you to fill in.
+A personal finance manager built on the provided Express API: accounts and their transactions, balances as of any date, and a forecast of future bills and income.
 
-The API exists so you can spend your time on the front end — accounts,
-transactions, categories, projects, scheduled bills, reports and projections are
-already there, already populated with 18 months of plausible data.
+- [Decision log](docs/DECISIONS.md): the reasoning and trade-offs behind each choice
+- [Conventions](docs/CONVENTIONS.md): the rules the client follows
+- [Starter README](docs/STARTER.md): the provided API, its contract and its deliberate edge cases
 
-**Node + Express, entirely in memory.** No database, no migrations, no auth.
-Restart and you are back to the same seed.
+## Running it
 
-> The backend is **not evaluated** — it is scaffolding. You are free to use it as
-> is, extend it, or throw it away and mock the API yourself. What we do want to
-> talk about is the **data contract**: how accounts, transactions, categories and
-> projections are modelled, and how your client consumes that model. If you
-> disagree with a decision made here, that is a good discussion, not a problem.
-
----
-
-## Quick start
+Requires Node 22.22+.
 
 ```bash
 npm install
-```
-
-```bash
 npm run dev
 ```
 
-That starts both processes with prefixed output; one Ctrl-C stops both.
+- **Client:** <http://localhost:5173>
+- **API:** <http://localhost:4000/api>
+- **Larger dataset:** `curl -X POST localhost:4000/api/dev/reset -H 'Content-Type: application/json' -d '{"scale":10}'` (~6,600 transactions). `npm run reset` restores the default seed.
 
-- **API**: <http://localhost:4000/api> — that URL returns an index of every endpoint
-- **Client**: <http://localhost:5173> — an empty React page, waiting for you
-- Conventions and enums: <http://localhost:4000/api/meta>
-- Health and row counts: <http://localhost:4000/api/health>
+From `client/`: `npm test`, `npm run lint`, `npm run build`.
 
-```bash
-curl "http://localhost:4000/api/accounts/balances"
-```
+## What I built
 
-Run one side alone with `npm run dev:api` or `npm run dev:web`. `npm start` runs
-the API without file watching, and `npm test` runs its test suite. Requires Node
-20+ (built and tested on 22).
-
-### The client folder
-
-[`client/`](client) is a bare Vite + React scaffold — one component, no data
-fetching, no design system, no opinions. It exists so `npm run dev` gives you
-something to open, and it is **meant to be replaced or converted**: switch it to
-TypeScript, bring your own tooling, or delete it and scaffold your own.
-
-Its dev server proxies `/api` to the backend ([`vite.config.js`](client/vite.config.js)),
-so `fetch('/api/accounts')` works from the client with no CORS involved. If you
-run your own dev server instead, CORS on the API reflects whatever origin asks, so
-any port works — pin it with `CORS_ORIGIN` if you prefer
-(see [`server/.env.example`](server/.env.example)).
-
----
-
-## The contract in one screen
-
-Everything else is in [**docs/API.md**](docs/API.md); TypeScript definitions for
-every shape are in [**docs/api-types.d.ts**](docs/api-types.d.ts) — copy that file
-into your client.
-
-**Money is always an integer number of minor units.** `-4599` is `-$45.99`.
-Decimals are rejected with a `422` rather than rounded, so no float error can
-enter the store. Negative is money out, positive is money in. A negative balance
-means overdrawn, or owed on a credit card.
-
-**Dates are `YYYY-MM-DD` strings with no timezone.** A transaction happens on a
-day, not at an instant. They sort lexicographically. `createdAt`/`updatedAt` are
-real UTC instants — different thing, different type.
-
-**Balances are derived, never stored**, so `?asOf=2026-03-31` is the same code
-path as today's balance. `posted`, `pending` and `available` are separate numbers
-because "the balance" is ambiguous while a card hold is in flight.
-
-**A transfer is two transactions sharing a `transferId`**, not a third record
-type. Reports exclude both legs by default and tell you how many they dropped.
-
-**Reports speak `inflow` / `outflow` / `net`.** The first two are magnitudes
-(`>= 0`); classification follows the sign of the amount, not the category's kind,
-so a refund is an inflow even in an expense category.
-
-**No exchange rates exist here.** One account is in USD. Reports cover one
-currency at a time and balance totals are grouped by currency, never summed
-across them. Cross-currency transfers are refused rather than guessed.
-
----
-
-## Where each user story lives
-
-| # | Story | Endpoints |
-|---|---|---|
-| 1 | Accounts and their transactions | `/api/accounts`, `/api/transactions`, `/api/transfers` |
-| 2 | Balance now, or as of any date | `/api/accounts/balances?asOf=`, `/api/accounts/:id/balance-history` |
-| 3 | Expenses by category per month | `/api/reports/monthly-expenses` |
-| 4 | Future bills and budget projection | `/api/scheduled-items`, `/api/scheduled-items/occurrences`, `/api/projections/budget` |
-| 5 | Spending per project | `/api/projects/:id/summary` |
-
-You are not expected to build all five. Pick what shows your thinking best.
-
----
-
-## Things the API does on purpose
-
-Because a mock that only ever returns the happy path is not much of a mock.
-
-**It can be slow and it can fail, on demand.**
-
-```bash
-curl "http://localhost:4000/api/transactions?__latency=2000"   # loading states
-curl "http://localhost:4000/api/reports/cash-flow?__error=500" # error boundaries
-```
-
-Headers work too (`x-simulate-latency`, `x-simulate-error`), and
-`POST /api/dev/settings {"latencyMs":800,"errorRate":0.2}` makes it global until
-you turn it off. `/api/dev/*` is never delayed or failed, so there is always a way
-back.
-
-**Bulk writes report partial success** — `POST /api/transactions/bulk` answers
-`207` with a per-item `errors[]` when some rows fail. Partial-failure UI is hard
-to design against a mock that can't produce it.
-
-**It refuses destructive operations instead of doing them quietly.** Deleting an
-account with history is a `409` that tells you how to proceed (`?force=true`, or
-archive instead). Deleting a category offers `?reassignTo=`.
-
-**More data on demand.** The default seed is ~1,100 transactions;
-`POST /api/dev/reset {"scale":10}` gives ~6,600 — enough to make an unvirtualised
-list feel bad. The API still answers every report in under 20ms, so anything slow
-is on your side of the wire.
-
-**The seed contains the awkward cases**: a genuine duplicate charge, a zero-amount
-reversal, an $18,500 outlier, a pending hold that may never post, uncategorised
-rows as a review queue, transactions on both sides of a month boundary, a bill
-anchored to the 31st that has to clamp in February, a paused scheduled item, and a
-second currency. The full list is at the end of [docs/API.md](docs/API.md#edge-cases-seeded-on-purpose).
-
----
-
-## What is deliberately not here
-
-| Not implemented | Why |
+| Story | Screen |
 |---|---|
-| Authentication / authorisation | Out of scope for the challenge |
-| Persistence | In-memory is the point; restart is the reset button |
-| Cursor pagination | Offset pagination in both styles (`page`/`pageSize`, `offset`/`limit`) is enough for an in-memory store. The trade-off is worth discussing, not faking |
-| Exchange rates | Any rate would be invented, and wrong money is worse than absent money |
-| Optimistic concurrency (ETags, `If-Match`) | Single user, single process |
-| Real-time updates (SSE / WebSocket) | Poll, or invalidate after mutations |
-| Category nesting deeper than one level | Every report would have to choose between leaf and rolled-up totals at every level, forever |
-| Recurring transfers | A scheduled item targets one account; a transfer needs two |
-| Attachments, receipts, reconciliation | Not needed by any user story |
+| **1. Accounts and transactions** | `/accounts` groups accounts by type. `/accounts/:id` shows the balance and a virtualized, date-grouped transaction list with running balances. |
+| **2. Balance as of any date** | An `asOf` date picker on both account screens, kept in the URL. |
+| **4. Future bills and projection** | `/forecast`: projected balance summary, chart, monthly breakdown, upcoming occurrences, and a form to add a bill or income. |
 
----
+**Left out:**
+- **Story 3** (expenses by category): another read-only view over the ledger. Story 4 adds a form, a mutation and a chart which felt more impactful. See [DECISIONS](docs/DECISIONS.md#story-4-over-story-3).
+- **Editing the ledger:** the API supports account, transaction and transfer CRUD, but I put the form and mutation work into Story 4 instead. In a real finance manager, accounts and transactions mostly arrive from bank feeds, while future bills and income are entered by the user. The forecast form shows the pattern (zod schema, server `422` mapping, invalidation) a transaction form would reuse.
 
-## Layout
+## Key decisions
 
-```
-client/                       bare React scaffold — yours to replace
-server/
-├── src/
-│   ├── index.js              boot: seed the store, start listening
-│   ├── app.js                express wiring, CORS, error handling
-│   ├── routes/               one file per resource; HTTP only, no domain logic
-│   ├── services/
-│   │   ├── balances.js       derived balances, history, running balance
-│   │   ├── reports.js        monthly expenses, category breakdown, cash flow
-│   │   ├── projections.js    budget projection, upcoming occurrences
-│   │   ├── recurrence.js     expanding a scheduled rule into dates
-│   │   └── query.js          the single "which transactions?" filter
-│   ├── store/
-│   │   ├── index.js          five Maps and a reset function
-│   │   └── seed.js           the 18-month dataset, with its edge cases
-│   ├── lib/                  money, dates, ids, validation, pagination, errors
-│   └── middleware/           latency/failure simulation, error shaping
-└── test/                     node:test — dates, recurrence, API, report invariants
-docs/
-├── API.md                    full endpoint reference
-├── api-types.d.ts            TypeScript definitions for the whole contract
-└── CHALLENGE.md              the challenge brief
-```
+- **Feature folders that don't import from each other**, each with its own `queries.ts`. A new story is a new folder and a route, lazy-loaded like the forecast.
+- **Server state in TanStack Query, shareable state in the URL.** No global store: `asOf` and `currency` are URL params parsed with zod.
+- **Virtualization with offset paging** for transactions. Profiled at `scale: 10`; scroll commits take 4 to 7 ms.
+- **Derived values stay on the server.** Running balances need every earlier row, which the client doesn't have; the client matches the server's sort so ties line up.
+- **Money is integer minor units end to end**, including form input. Currencies are never summed.
+- **Calendar dates are timezone-free strings**, and the client sends its own "today". Tests run in `America/Vancouver` to catch day-shift bugs.
+- **Tests guard silent, costly bugs:** money, dates, grouping, URL parsing, form schemas, error recovery. Since most of the components are pulled in through Untitled UI, component testing didn't feel valuable.
 
-Routes do HTTP: parse, validate, delegate, serialise. Everything that computes a
-number lives in `services/`, which is why `/api/reports/monthly-expenses` and
-`/api/projections/budget` cannot disagree about what counts as an expense.
+Full reasoning in the [decision log](docs/DECISIONS.md).
 
-### Tests
+## Design system
 
-```bash
-npm test
-```
+**UntitledUI React on Tailwind v4**, with an Estateably-inspired palette set as token overrides.
 
-52 tests, covering the parts where a bug is silent rather than loud: calendar
-arithmetic across month and year boundaries, recurrence clamping (a bill on the
-31st in February), balance and running-balance arithmetic, report totals matching
-the transactions they claim to cover, transfer exclusion, and the projection
-invariant that nothing is counted as both actual and forecast. CRUD plumbing is
-not tested — it is the part that fails loudly.
+- **Why:** it's the system Estateably uses, and it's built on React Aria, so keyboard and screen reader support comes built in. Also valuable to give myself some exposure to the framework.
+- **Where it fought me:** the CLI ignores project lint and format config and pulls in whole component families. The date picker's Cancel didn't cancel. Fields show errors through `hint`, so forms keep their own error state. Details in [DECISIONS](docs/DECISIONS.md#untitledui--tailwind-v4).
 
----
+## Where I used AI
 
-## Notes for the discussion
+I used Claude Code throughout, with a spec-first, test-driven flow.
 
-Some of the modelling choices here are genuinely arguable, and we would rather
-hear your view than have you assume ours:
+**How I worked**
+- **Lead and technical product role:** for each story I wrote the requirements, split them into small chunks, and worked through edge cases and technical considerations up front.
+- **Decisions captured in markdown:** conventions, stack choices and preferences live in the docs, so Claude reused them and output needed few iterations.
+- **Pair programmer:** in areas I knew less well, it proposed approaches with alternatives and we discussed the trade-offs before locking one in. I reviewed each piece with a What/Why/How explanation before keeping it.
+- **Docs are mine.** AI drafted some entries, which I reworded and cleaned up.
 
-- **Derived vs. stored.** Balances, running balances, project totals and
-  `nextDueDate` are all computed per request. That is trivially correct and
-  obviously not what you would do at scale. Where would you draw the line, and
-  what would you cache on the client?
-- **Where the computation lives.** The running balance is server-side because a
-  client cannot compute it from one page. Monthly category rollups are *not* —
-  the report returns leaf categories and `parentId`. Would you move either?
-- **The projection seam.** Actuals up to today, scheduled items after: one bucket
-  is a hybrid. How would you render that honestly?
-- **Scheduled items are rules, not rows.** Nothing is materialised in advance,
-  which keeps the forecast live but makes "mark this one paid" awkward
-  (`postedOccurrences`, keyed by date). Would you have materialised instead?
-- **`?include=`** exists to avoid N+1 fetches, and the ledger returns bare
-  foreign keys by default. Which does your data layer actually want?
+**Where it did the heavy lifting**
+- **Workspace setup:** ESLint, Prettier, Vitest and VS Code settings.
+- **TanStack Query setup** and the conventions around each endpoint. I learned to transform data with a stable `select` so it only re-runs when the data changes. I also moved from custom hooks that spread an options argument (`useGetAccounts(id, options)`) to exporting `queryOptions` factories: call sites add their own options with full type inference, including `select`, and the same factory works for prefetching and cache reads.
+- **Tests alongside each feature.** I chose which ones were worth keeping.
+
+**Where I led**
+- **Stack, scope and story choices.**
+- **Design system:** researched the colours and designed the custom `globals.css` theme on UntitledUI's tokens.
+- **Layout and visual direction,** researched from RBC and Wealthsimple for inspiration.
+- **Component direction** and the conventions to follow.
+- **Profiling** with the React DevTools Profiler, which found the `memo` and `getItemKey` fixes.
+
+The backend is untouched, as provided.
+
+**What I changed or rejected**
+- **Over-scaffolding:** the first attempt did too much in one pass, so I restarted in a fresh repo, one small step at a time.
+- **Lint overrides on UntitledUI code:** replaced by excluding vendor code from lint.
+- **Tests of presentational components:** tests only guard silent, costly bugs.
+- **Building the data layer ahead of the stories:** cut back to minimal scaffolding, filled in as each story needed it.
+- **React Query Devtools:** I used the React DevTools Profiler instead.
+
+## Next, with more time
+
+- **Transaction filters and search** (category, amount, text), kept in the URL.
+- **Add and edit transactions**, including transfers and the bulk endpoint's partial-success (`207`) UI.
+- **Edit, pause and delete scheduled items** on the forecast.
+- **Story 3**, the monthly expense report.
+- **Accounts in the sidebar** as direct sub-links for quick access.
+- **End-to-end tests** for the main flows, and an automated axe check.

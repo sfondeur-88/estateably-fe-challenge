@@ -27,7 +27,7 @@ We won't assess database schema, server-side architecture, query performance, or
 
 > **This repository already contains a working backend** — an in-memory Node/Express
 > API with 18 months of seeded data. Use it, extend it, or replace it. See the
-> [README](../README.md) and [API reference](./API.md). Its data contract is a
+> [README](./STARTER.md) and [API reference](./API.md). Its data contract is a
 > starting point, not a verdict; disagreeing with it out loud is welcome.
 
 Similarly, authentication and authorization are **not required**. Skip them.

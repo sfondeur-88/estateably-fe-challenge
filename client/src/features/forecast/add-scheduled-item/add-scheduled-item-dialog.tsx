@@ -183,7 +183,7 @@ function AddScheduledItemForm({ onDone }: { onDone: () => void }) {
         <InputDate
           name="startDate"
           label="Next due date"
-          defaultValue={today(getLocalTimeZone())}
+          defaultValue={today(getLocalTimeZone()).add({ days: 1 })}
           isRequired
           isInvalid={Boolean(errors.startDate)}
           hint={errors.startDate}

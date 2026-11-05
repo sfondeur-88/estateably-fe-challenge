@@ -32,6 +32,7 @@ Run from `client/`:
 - **Tailwind v4, CSS-first.** Theme and plugins live in CSS; there is no `tailwind.config.js`.
 - **Utility classes in JSX.** Reuse comes from components, not custom CSS classes or `@apply`.
 - **Design tokens come from UntitledUI's `theme.css`.** No arbitrary values (`text-[13px]`) when a token exists.
+- **Container queries for layout inside the page.** The sidebar makes viewport breakpoints unreliable there.
 
 ## UntitledUI components
 
@@ -52,8 +53,15 @@ Run from `client/`:
 
 - **Server state:** TanStack Query.
 - **Queries live in `features/<area>/queries.ts`:** fetch functions, query keys and `queryOptions` factories. Components spread the options and add their own (`select`, `enabled`). Consider creating sub-directories if queries.ts grows.
+- **Queries shared across features live in `src/api/<resource>.ts`.**
 - **Types are inferred from the `queryFn`.** No generics on `useQuery`.
-- **Client state:** <!-- TODO:Shane -->
+- **Mutations invalidate by key prefix** and return the promise, so the pending state lasts until the refetch is done.
+- **Client state:** no global store. Shareable state lives in the URL, parsed with zod; the rest is component state.
+
+## Forms
+
+- **React Aria `Form` with a zod schema**, parsed from `FormData` on submit.
+- **Errors show in the field's `hint`**, including server `422` details. Focus moves to the first invalid field.
 
 ## Money
 
@@ -71,7 +79,17 @@ Run from `client/`:
 
 - **Target WCAG 2.1 AA.**
 - **`eslint-plugin-jsx-a11y`** catches static issues at lint time.
+- **Control borders meet 3:1 contrast.**
+- **Loading is `role="status"`, errors are `role="alert"`.** Stale data dims with `aria-busy` rather than swapping to a spinner.
+- **Charts are `role="img"` with a summary**, and a table carries the same data.
+- **Custom clickables get `cursor-pointer`.**
+
+## Performance
+
+- **Virtualize long lists.** Memoize rows, and keep `select` and virtualizer callbacks stable.
 
 ## Testing
 
-<!-- What we test and why. -->
+- **Test where a bug would be silent and costly:** money, dates, grouping, URL parsing, form schemas, error recovery. Skip presentational components and vendor code.
+- **Tests run in `America/Vancouver`** so day-shift bugs fail locally.
+- **Stub `fetch` with `vi.stubGlobal`** and give each test a fresh `QueryClient` with retries off.
