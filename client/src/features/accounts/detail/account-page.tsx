@@ -32,6 +32,7 @@ function AccountDetail({ accountId }: { accountId: string }) {
     data: account,
     error,
     isFetching,
+    isPlaceholderData,
     refetch,
   } = useQuery({
     ...accountQueryOptions(accountId, asOf),
@@ -75,7 +76,11 @@ function AccountDetail({ accountId }: { accountId: string }) {
       ) : (
         <>
           {account?.balance ? (
-            <BalanceSummary account={account} balance={account.balance} />
+            <BalanceSummary
+              account={account}
+              balance={account.balance}
+              isBusy={isPlaceholderData}
+            />
           ) : (
             <StatusCard role="status" message="Loading account…" />
           )}
@@ -89,16 +94,20 @@ function AccountDetail({ accountId }: { accountId: string }) {
 type BalanceSummaryProps = {
   account: Account;
   balance: Balance;
+  isBusy: boolean;
 };
 
-function BalanceSummary({ account, balance }: BalanceSummaryProps) {
+function BalanceSummary({ account, balance, isBusy }: BalanceSummaryProps) {
   const details = [account.institution, accountTypeLabels[account.type]]
     .filter(Boolean)
     .join(' · ');
   const money = (amount: number) => formatMoney(amount, account.currency);
 
   return (
-    <Card className="flex flex-col gap-4 px-4 py-5 md:px-6">
+    <Card
+      aria-busy={isBusy}
+      className="flex flex-col gap-4 px-4 py-5 transition-opacity aria-busy:opacity-60 aria-busy:delay-200 md:px-6"
+    >
       <div>
         <p className="text-sm text-tertiary">{details}</p>
         <p className="text-display-sm font-semibold text-primary tabular-nums">

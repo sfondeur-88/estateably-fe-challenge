@@ -4,7 +4,7 @@ import {
   useInfiniteQuery,
 } from '@tanstack/react-query';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import type { Collection, IsoDate, Transaction } from '@/api/types.ts';
 import { Button } from '@/components/base/buttons/button';
@@ -85,12 +85,10 @@ export function TransactionList({ accountId, asOf }: TransactionListProps) {
           items={data.items}
           headingId={headingId}
           isBusy={isPlaceholderData}
-          canLoadMore={
-            hasNextPage && !isFetchingNextPage && !isFetchNextPageError
-          }
+          canLoadMore={hasNextPage && !isFetching && !isFetchNextPageError}
           onLoadMore={() => void fetchNextPage()}
         />
-        {isFetchingNextPage && (
+        {isFetchingNextPage && !isFetchNextPageError && (
           <p role="status" className="py-4 text-center text-sm text-tertiary">
             Loading more transactions…
           </p>
@@ -103,6 +101,7 @@ export function TransactionList({ accountId, asOf }: TransactionListProps) {
             <Button
               size="sm"
               color="secondary"
+              isLoading={isFetchingNextPage}
               onPress={() => void fetchNextPage()}
             >
               Try again
@@ -148,11 +147,17 @@ function VirtualTransactions({
   // State rather than a ref so offsetTop can be read during render.
   const [listElement, setListElement] = useState<HTMLDivElement | null>(null);
 
+  // Stable between scroll renders: the virtualizer recomputes every item position when this changes.
+  const getItemKey = useCallback(
+    (index: number) => items[index]?.key ?? index,
+    [items],
+  );
+
   const virtualizer = useWindowVirtualizer({
     count: items.length,
     estimateSize: (index) =>
       items[index]?.kind === 'date' ? DATE_HEIGHT : ROW_HEIGHT,
-    getItemKey: (index) => items[index]?.key ?? index,
+    getItemKey,
     overscan: 10,
     scrollMargin: listElement?.offsetTop ?? 0,
   });
@@ -172,7 +177,7 @@ function VirtualTransactions({
       role="list"
       aria-labelledby={headingId}
       aria-busy={isBusy}
-      className="relative w-full"
+      className="relative w-full transition-opacity aria-busy:opacity-60 aria-busy:delay-200"
       style={{ height: virtualizer.getTotalSize() }}
     >
       {virtualItems.map((virtualItem) => {

@@ -4,7 +4,7 @@ import {
   Repeat04,
   SwitchHorizontal01,
 } from '@untitledui/icons';
-import type { FC } from 'react';
+import { type FC, memo } from 'react';
 
 import type { Transaction } from '@/api/types.ts';
 import { Badge } from '@/components/base/badges/badges';
@@ -35,7 +35,7 @@ type TransactionRowProps = {
   isLastOfDate: boolean;
 };
 
-export function TransactionRow({
+export const TransactionRow = memo(function TransactionRow({
   transaction,
   isFirstOfDate,
   isLastOfDate,
@@ -87,4 +87,4 @@ export function TransactionRow({
       </div>
     </div>
   );
-}
+});

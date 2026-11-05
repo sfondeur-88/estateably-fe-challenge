@@ -63,7 +63,10 @@ function AccountGroups() {
   }
 
   return (
-    <div aria-busy={isPlaceholderData} className="flex flex-col gap-8">
+    <div
+      aria-busy={isPlaceholderData}
+      className="flex flex-col gap-8 transition-opacity aria-busy:opacity-60 aria-busy:delay-200"
+    >
       {groups.map((group) => (
         <AccountGroupCard key={group.id} group={group} />
       ))}
