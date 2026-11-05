@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
+import { accountsQueryOptions } from '@/api/accounts.ts';
 import { Button } from '@/components/base/buttons/button';
 import { DocumentTitle } from '@/components/common/document-title.tsx';
 import { PageHeader } from '@/components/common/page-header.tsx';
@@ -7,7 +8,6 @@ import { StatusCard } from '@/components/common/status-card.tsx';
 import { groupAccounts } from '@/features/accounts/account-types.ts';
 import { AsOfPicker } from '@/features/accounts/as-of/as-of-picker.tsx';
 import { useAsOf } from '@/features/accounts/as-of/use-as-of.ts';
-import { accountsQueryOptions } from '@/features/accounts/queries.ts';
 
 import { AccountGroupCard } from './account-group-card.tsx';
 

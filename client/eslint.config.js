@@ -14,6 +14,7 @@ export default defineConfig([
     // UntitledUI vendor code, kept as its CLI writes it. See docs/CONVENTIONS.md.
     'src/components/{base,application,foundations,marketing,shared-assets}/**',
     'src/hooks/use-breakpoint.ts',
+    'src/hooks/use-resize-observer.ts',
     'src/utils/cx.ts',
     'src/utils/is-react-component.ts',
   ]),

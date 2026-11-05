@@ -1,4 +1,4 @@
-import { PiggyBank01, Wallet02 } from '@untitledui/icons';
+import { LineChartUp02, PiggyBank01, Wallet02 } from '@untitledui/icons';
 import type { FC } from 'react';
 import { Link } from 'react-aria-components';
 import { useMatch } from 'react-router';
@@ -15,6 +15,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: 'Accounts', href: paths.accounts, icon: Wallet02 },
+  { label: 'Forecast', href: paths.forecast, icon: LineChartUp02 },
 ];
 
 /**
@@ -27,7 +28,7 @@ export function AppSidebar() {
     <aside className="dark-mode flex items-center gap-6 bg-primary px-4 py-3 shadow-topbar [--color-fg-quaternary_hover:var(--color-brand-300)] md:sticky md:top-0 md:h-dvh md:w-64 md:shrink-0 md:flex-col md:items-stretch md:px-4 md:py-6 md:shadow-sidebar">
       <BrandLink />
       <nav aria-label="Main">
-        <ul className="flex gap-1 md:flex-col">
+        <ul className="flex gap-2 md:flex-col">
           {NAV_ITEMS.map((item) => (
             <li key={item.href}>
               <SidebarLink {...item} />
@@ -49,7 +50,7 @@ function BrandLink() {
       <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-500">
         <PiggyBank01 aria-hidden="true" className="size-5 text-white" />
       </span>
-      <span className="text-lg font-semibold tracking-tight text-primary">
+      <span className="text-lg font-semibold tracking-tight text-primary max-sm:sr-only">
         Simple<span className="text-brand-300">wealth</span>
       </span>
     </Link>

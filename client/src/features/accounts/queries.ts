@@ -1,19 +1,14 @@
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 
+import { accountKeys } from '@/api/accounts.ts';
 import { apiFetch } from '@/api/client.ts';
 import type {
   Account,
-  AccountListMeta,
   Collection,
   IsoDate,
   Single,
   Transaction,
 } from '@/api/types.ts';
-
-function fetchAccounts(asOf: IsoDate) {
-  const params = new URLSearchParams({ asOf });
-  return apiFetch<Collection<Account, AccountListMeta>>(`/accounts?${params}`);
-}
 
 function fetchAccount(accountId: string, asOf: IsoDate) {
   const params = new URLSearchParams({ asOf });
@@ -42,25 +37,11 @@ function fetchAccountTransactions(
   return apiFetch<Collection<Transaction>>(`/transactions?${params}`);
 }
 
-const accountKeys = {
-  all: ['accounts'] as const,
-  list: (asOf: IsoDate) => [...accountKeys.all, 'list', { asOf }] as const,
-  detail: (accountId: string, asOf: IsoDate) =>
-    [...accountKeys.all, 'detail', accountId, { asOf }] as const,
-};
-
 const transactionKeys = {
   all: ['transactions'] as const,
   list: (filters: { accountId: string; to: IsoDate }) =>
     [...transactionKeys.all, 'list', filters] as const,
 };
-
-export function accountsQueryOptions(asOf: IsoDate) {
-  return queryOptions({
-    queryKey: accountKeys.list(asOf),
-    queryFn: () => fetchAccounts(asOf),
-  });
-}
 
 export function accountQueryOptions(accountId: string, asOf: IsoDate) {
   return queryOptions({

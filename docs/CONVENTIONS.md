@@ -35,7 +35,7 @@ Run from `client/`:
 
 ## UntitledUI components
 
-- **Vendor code stays as the CLI writes it.** That covers `src/components/{base,application,foundations,marketing,shared-assets}/`, `src/utils/cx.ts`, `src/utils/is-react-component.ts`, `src/hooks/use-breakpoint.ts` and `src/styles/theme.css`. Excluded from ESLint and Prettier; still type-checked.
+- **Vendor code stays as the CLI writes it.** That covers `src/components/{base,application,foundations,marketing,shared-assets}/`, `src/utils/cx.ts`, `src/utils/is-react-component.ts`, `src/hooks/use-breakpoint.ts`, `src/hooks/use-resize-observer.ts` and `src/styles/theme.css`. Excluded from ESLint and Prettier; still type-checked.
 - **Wrap, don't edit.** Customise by composing vendor components inside our own, outside the vendor folders.
 - **Patch only for bugs or type errors**, and record why in [DECISIONS.md](./DECISIONS.md).
 - **Adding one**, from `client/`: `npx untitledui@0.1.69 add <name> --lib-version 8 -y`, then `npm run format`. The CLI re-saves `tsconfig.json` in its own style.

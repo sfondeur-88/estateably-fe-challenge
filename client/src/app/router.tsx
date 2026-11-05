@@ -2,6 +2,7 @@ import { createBrowserRouter, redirect, type RouteObject } from 'react-router';
 
 import { AccountPage } from '@/features/accounts/detail/account-page.tsx';
 import { AccountsPage } from '@/features/accounts/list/accounts-page.tsx';
+import { ForecastPage } from '@/features/forecast/forecast-page.tsx';
 
 import { AppLayout } from './app-layout.tsx';
 import { ErrorPage } from './error-page.tsx';
@@ -22,6 +23,7 @@ export const routes: RouteObject[] = [
           { index: true, loader: () => redirect(paths.accounts) },
           { path: 'accounts', Component: AccountsPage },
           { path: 'accounts/:accountId', Component: AccountPage },
+          { path: 'forecast', Component: ForecastPage },
           { path: '*', Component: NotFoundPage },
         ],
       },

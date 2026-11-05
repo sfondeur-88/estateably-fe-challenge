@@ -11,6 +11,12 @@ const dateFormatters = {
     dateStyle: 'long',
     timeZone: 'UTC',
   }),
+  month: new Intl.DateTimeFormat('en-CA', { month: 'short', timeZone: 'UTC' }),
+  monthYear: new Intl.DateTimeFormat('en-CA', {
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }),
 };
 
 export function todayIso(): IsoDate {
